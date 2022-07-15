@@ -102,8 +102,20 @@ GROUP BY album.name
 HAVING COUNT(t.id) = (
     SELECT MIN(amount)
     FROM (
-        SELECT count(t.id) AS amount
+        SELECT COUNT(t.id) AS amount
         FROM album AS a
         LEFT JOIN track AS t ON a.id = t.album_id
         GROUP BY a.name
     ) as temp);
+    
+-- второй вариант выборки - название альбомов, содержащих наименьшее количество треков / second option - name of albums containing the least number of tracks;    
+SELECT album.name Album, 
+COUNT(track.name) track_count FROM album 
+JOIN track ON Album.id = track.AlbumId
+GROUP BY album.name
+HAVING COUNT(track.name) = (  
+	SELECT COUNT(track.name) FROM album
+	JOIN track ON Album.Id = track.AlbumId
+	GROUP BY album.name
+	ORDER BY COUNT(track.name)
+	LIMIT 1);
